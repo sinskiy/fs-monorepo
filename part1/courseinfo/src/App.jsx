@@ -21,10 +21,14 @@ const Header = ({ course }) => <h1>{course}</h1>
 const Content = ({ parts }) => (
   <>
     {parts.map(({ title, exercises }) => (
-      <p>
-        {title} {exercises}
-      </p>
+      <Part title={title} exercises={exercises} />
     ))}
   </>
 )
 const Total = ({ sum }) => <p>Number of exercises {sum}</p>
+
+const Part = ({ title, exercises }) => (
+  <p>
+    {title} {exercises}
+  </p>
+)
