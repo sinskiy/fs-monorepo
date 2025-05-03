@@ -23,7 +23,7 @@ const Header = ({ course }) => <h1>{course}</h1>
 const Content = ({ parts }) => (
   <>
     {parts.map(({ name, exercises }) => (
-      <Part name={name} exercises={exercises} />
+      <Part key={name} name={name} exercises={exercises} />
     ))}
   </>
 )
