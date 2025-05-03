@@ -1,16 +1,18 @@
 const App = () => {
-  const course = 'Two stack application development'
-  const parts = [
-    { title: 'Coloring buttons', exercises: 10 },
-    { title: 'Setting your computer on fire', exercises: 7 },
-    { title: 'Touching grass', exercises: 14 },
-  ]
+  const course = {
+    name: 'Two stack application development',
+    parts: [
+      { name: 'Coloring buttons', exercises: 10 },
+      { name: 'Setting your computer on fire', exercises: 7 },
+      { name: 'Touching grass', exercises: 14 },
+    ],
+  }
 
   return (
     <div>
-      <Header course={course} />
-      <Content parts={parts} />
-      <Total sum={parts.reduce((sum, curr) => sum + curr.exercises, 0)} />
+      <Header course={course.name} />
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
@@ -20,15 +22,19 @@ export default App
 const Header = ({ course }) => <h1>{course}</h1>
 const Content = ({ parts }) => (
   <>
-    {parts.map(({ title, exercises }) => (
-      <Part title={title} exercises={exercises} />
+    {parts.map(({ name, exercises }) => (
+      <Part name={name} exercises={exercises} />
     ))}
   </>
 )
-const Total = ({ sum }) => <p>Number of exercises {sum}</p>
-
-const Part = ({ title, exercises }) => (
+const Total = ({ parts }) => (
   <p>
-    {title} {exercises}
+    Number of exercises {parts.reduce((sum, curr) => sum + curr.exercises, 0)}
+  </p>
+)
+
+const Part = ({ name, exercises }) => (
+  <p>
+    {name} {exercises}
   </p>
 )
