@@ -1,4 +1,7 @@
 import express from 'express'
+import morgan from 'morgan'
+
+morgan.token('body', req => JSON.stringify(req.body))
 
 let persons = [
   {
@@ -25,6 +28,9 @@ let persons = [
 
 const app = express()
 app.use(express.json())
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+)
 
 app.get('/info', (req, res) => {
   res.type('html')
