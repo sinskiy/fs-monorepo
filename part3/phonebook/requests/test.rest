@@ -1,0 +1,32 @@
+GET http://localhost:3001/api
+###
+GET http://localhost:3001/info
+###
+GET http://localhost:3001/api/persons
+###
+GET http://localhost:3001/api/persons/1
+###
+DELETE http://localhost:3001/api/persons/4627386013101208
+###
+POST http://localhost:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample",
+    "number": "test"
+}
+###
+POST http://localhost:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Dan Abramov",
+    "number": "12-43-234345"
+}
+###
+POST http://localhost:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Dima Sinskiy"
+}
