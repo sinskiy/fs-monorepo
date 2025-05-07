@@ -28,6 +28,7 @@ let persons = [
 
 const app = express()
 app.use(express.json())
+app.use(express.static('dist'))
 app.use(
   morgan(':method :url :status :res[content-length] - :response-time ms :body')
 )
@@ -57,12 +58,13 @@ app
     } else if (persons.some(person => person.name === req.body.name)) {
       res.status(400).json({ error: 'name must be unique' })
     } else {
-      persons.push({
+      const newPerson = {
         id: String(Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER + 1))),
         name: req.body.name,
         number: req.body.number,
-      })
-      res.end()
+      }
+      persons.push(newPerson)
+      res.json(newPerson)
     }
   })
 
@@ -83,7 +85,7 @@ app
 
 app.use((req, res) => res.status(404).send({ error: 'unknown endpoint' }))
 
-const PORT = 3001
+const PORT = process.env.PORT ?? 3001
 app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
