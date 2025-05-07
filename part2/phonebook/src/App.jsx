@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useState } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -8,20 +8,43 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then((response) => setPersons(response.data))
+    personsService.getAllPersons().then(data => setPersons(data))
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault()
 
-    if (persons.some(({ name }) => name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const existingPerson = persons.find(person => person.name === newName)
+    if (existingPerson !== undefined) {
+      const doReplace = confirm(
+        `${existingPerson.name} is already added to phonebook, replace the old number with a new one?`
+      )
+      if (doReplace) {
+        personsService
+          .updatePersonNumber(existingPerson.id, newNumber)
+          .then(data =>
+            setPersons(
+              persons.map(person => (person.id === data.id ? data : person))
+            )
+          )
+      }
     } else {
-      setPersons([...persons, { name: newName, number: newNumber }])
-
       setNewName(''), setNewNumber('')
+
+      personsService
+        .createPerson(newName, newNumber)
+        .then(data => setPersons([...persons, data]))
+    }
+  }
+
+  const handleDeleteClick = (id, name) => {
+    const doDelete = confirm(`Delete ${name}?`)
+    if (doDelete) {
+      personsService
+        .deletePerson(id)
+        .then(data =>
+          setPersons(persons.filter(person => person.id !== data.id))
+        )
     }
   }
 
@@ -41,7 +64,7 @@ const App = () => {
         setNewNumber={setNewNumber}
       />
       <h3>Numbers</h3>
-      <Persons result={result} />
+      <Persons persons={result} onDeleteClick={handleDeleteClick} />
     </div>
   )
 }
@@ -49,7 +72,7 @@ const App = () => {
 export default App
 
 const filterPersons =
-  (search) =>
+  search =>
   ({ name, number }) =>
     name.toLowerCase().includes(search.toLowerCase()) ||
     number.toLowerCase().includes(search.toLowerCase())
@@ -63,7 +86,7 @@ const Filter = ({ search, setSearch }) => (
         id="search"
         name="search"
         value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
+        onChange={e => setSearch(e.currentTarget.value)}
       />
     </form>
   </search>
@@ -83,7 +106,7 @@ const PersonForm = ({
         type="text"
         id="name"
         value={newName}
-        onChange={(e) => setNewName(e.currentTarget.value)}
+        onChange={e => setNewName(e.currentTarget.value)}
       />
     </div>
     <div>
@@ -92,7 +115,7 @@ const PersonForm = ({
         type="tel"
         id="number"
         value={newNumber}
-        onChange={(e) => setNewNumber(e.currentTarget.value)}
+        onChange={e => setNewNumber(e.currentTarget.value)}
       />
     </div>
     <div>
@@ -101,11 +124,12 @@ const PersonForm = ({
   </form>
 )
 
-const Persons = ({ result }) => (
+const Persons = ({ persons, onDeleteClick }) => (
   <ul style={{ listStyleType: 'none', padding: 0 }}>
-    {result.map(({ number, name }) => (
+    {persons.map(({ id, number, name }) => (
       <li key={name}>
         <span>{name}</span> <span>{number}</span>
+        <button onClick={() => onDeleteClick(id, name)}>delete</button>
       </li>
     ))}
   </ul>
