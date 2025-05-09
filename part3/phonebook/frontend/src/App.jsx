@@ -35,10 +35,10 @@ const App = () => {
       )
       if (doReplace) {
         personsService
-          .updatePersonNumber(existingPerson.id, newNumber)
+          .updatePersonNumber(existingPerson._id, newNumber)
           .then(data => {
             setPersons(
-              persons.map(person => (person.id === data.id ? data : person))
+              persons.map(person => (person._id === data._id ? data : person))
             )
             updateNotification({
               status: 'success',
@@ -79,7 +79,7 @@ const App = () => {
       personsService
         .deletePerson(id)
         .then(() => {
-          setPersons(persons.filter(person => person.id !== id))
+          setPersons(persons.filter(person => person._id !== id))
           updateNotification({
             status: 'success',
             text: `Deleted ${name}`,
@@ -176,10 +176,10 @@ const PersonForm = ({
 
 const Persons = ({ persons, onDeleteClick }) => (
   <ul style={{ listStyleType: 'none', padding: 0 }}>
-    {persons.map(({ id, number, name }) => (
+    {persons.map(({ _id, number, name }) => (
       <li key={name}>
         <span>{name}</span> <span>{number}</span>
-        <button onClick={() => onDeleteClick(id, name)}>delete</button>
+        <button onClick={() => onDeleteClick(_id, name)}>delete</button>
       </li>
     ))}
   </ul>
