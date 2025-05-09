@@ -45,10 +45,12 @@ const App = () => {
               text: `Updated ${data.name}'s number from ${existingPerson.number} to ${data.number}`,
             })
           })
-          .catch(() =>
+          .catch(err =>
             setNotification({
               status: 'error',
-              text: 'Person could not be replaced. It could have been deleted, try to reload the page',
+              text: err.response.data.error
+                ? `Person validation failed: ${err.response.data.error}`
+                : 'Person could not be replaced. It could have been deleted, try to reload the page',
             })
           )
       }
@@ -64,10 +66,12 @@ const App = () => {
           })
           setPersons([...persons, data])
         })
-        .catch(() =>
+        .catch(err =>
           setNotification({
             status: 'error',
-            text: 'Person could not be created. Another person with the same name could have been created, try to reload the page',
+            text: err.response.data.error
+              ? `Person validation failed: ${err.response.data.error}`
+              : 'Person could not be created. Another person with the same name could have been created, try to reload the page',
           })
         )
     }
