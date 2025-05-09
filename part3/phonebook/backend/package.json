@@ -6,10 +6,14 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend"
+    "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "@types/node": "^22.15.14"
+    "@eslint/js": "^9.26.0",
+    "@types/node": "^22.15.14",
+    "eslint": "^9.26.0",
+    "globals": "^16.1.0"
   },
   "dependencies": {
     "dotenv": "^16.5.0",
