@@ -8,6 +8,8 @@ import { error, info } from './utils/logger.js'
 import blogsRouter from './controllers/blogs.js'
 import config from './utils/config.js'
 import mongoose from 'mongoose'
+import usersRouter from './controllers/users.js'
+import loginRouter from './controllers/login.js'
 
 const app = express()
 
@@ -22,6 +24,8 @@ app.use(express.json())
 app.use(requestLogger)
 
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
