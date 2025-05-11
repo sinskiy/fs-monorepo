@@ -1,7 +1,7 @@
 export const initialBlogs = [
   {
     title: 'React patterns',
-    author: 'Michael Chan',
+    author: 'test',
     url: 'https://reactpatterns.com/',
     likes: 7,
   },

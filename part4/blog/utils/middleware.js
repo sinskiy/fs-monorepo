@@ -1,10 +1,33 @@
+import User from '../models/user.js'
 import { info, error } from './logger.js'
+import jwt from 'jsonwebtoken'
 
 export const requestLogger = (request, response, next) => {
   info('Method:', request.method)
   info('Path:  ', request.path)
   info('Body:  ', request.body)
   info('---')
+  next()
+}
+
+export const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+  }
+  next()
+}
+
+export const userExtractor = async (request, response, next) => {
+  try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (decodedToken.id) {
+      const user = await User.findById(decodedToken.id)
+      if (user) {
+        request.user = user
+      }
+    }
+  } catch {}
   next()
 }
 

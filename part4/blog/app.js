@@ -2,7 +2,9 @@ import express from 'express'
 import {
   errorHandler,
   requestLogger,
+  tokenExtractor,
   unknownEndpoint,
+  userExtractor,
 } from './utils/middleware.js'
 import { error, info } from './utils/logger.js'
 import blogsRouter from './controllers/blogs.js'
@@ -22,8 +24,9 @@ mongoose
 
 app.use(express.json())
 app.use(requestLogger)
+app.use(tokenExtractor)
 
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', userExtractor, blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
