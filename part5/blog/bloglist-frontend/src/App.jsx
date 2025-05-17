@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useImperativeHandle, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -101,6 +101,8 @@ const Blogs = ({ username, handleLogout }) => {
     blogService.getAll().then(blogs => setBlogs(blogs))
   }, [])
 
+  const blogFormRef = useRef(null)
+
   return (
     <>
       <div>
@@ -109,7 +111,13 @@ const Blogs = ({ username, handleLogout }) => {
         <p>
           {username} logged in<button onClick={handleLogout}>logout</button>
         </p>
-        <BlogForm setBlogs={setBlogs} showMessage={showMessage} />
+        <Togglable buttonLabel="new note" ref={blogFormRef}>
+          <BlogForm
+            setBlogs={setBlogs}
+            showMessage={showMessage}
+            ref={blogFormRef}
+          />
+        </Togglable>
         {blogs.map(blog => (
           <Blog key={blog.id} blog={blog} />
         ))}
@@ -118,7 +126,34 @@ const Blogs = ({ username, handleLogout }) => {
   )
 }
 
-const BlogForm = ({ setBlogs, showMessage }) => {
+const Togglable = ({ children, buttonLabel, ref }) => {
+  const [visible, setVisible] = useState(false)
+
+  const hideWhenVisible = { display: visible ? 'none' : '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
+
+  useImperativeHandle(ref, () => {
+    return { toggleVisibility }
+  })
+
+  return (
+    <>
+      <div style={hideWhenVisible}>
+        <button onClick={toggleVisibility}>{buttonLabel}</button>
+      </div>
+      <div style={showWhenVisible}>
+        {children}
+        <button onClick={toggleVisibility}>cancel</button>
+      </div>
+    </>
+  )
+}
+
+const BlogForm = ({ setBlogs, showMessage, ref }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -138,6 +173,7 @@ const BlogForm = ({ setBlogs, showMessage }) => {
         status: 'success',
         text: `a new blog ${title} by ${author} added`,
       })
+      ref.current.toggleVisibility()
     } catch (err) {
       console.log(err)
       showMessage({
