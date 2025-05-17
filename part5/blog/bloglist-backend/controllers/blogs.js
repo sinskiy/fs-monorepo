@@ -48,8 +48,12 @@ blogsRouter.delete('/:id', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-  const blog = await Blog.findByIdAndUpdate(request.params.id, request.body)
+  const blog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    request.body
+  ).populate('user')
   if (blog) {
+    blog.likes += 1
     response.json(blog)
   } else {
     response.status(404).end()
