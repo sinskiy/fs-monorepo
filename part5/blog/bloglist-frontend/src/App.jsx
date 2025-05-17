@@ -2,6 +2,7 @@ import { useState, useEffect, useImperativeHandle, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import PropTypes from 'prop-types'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -88,6 +89,10 @@ const User = ({ setUser }) => {
   )
 }
 
+User.propTypes = {
+  setUser: PropTypes.func.isRequired,
+}
+
 const Blogs = ({ username, handleLogout }) => {
   const [message, setMessage] = useState(null)
   const showMessage = message => {
@@ -138,6 +143,11 @@ const Blogs = ({ username, handleLogout }) => {
   )
 }
 
+Blogs.propTypes = {
+  username: PropTypes.string.isRequired,
+  handleLogout: PropTypes.func.isRequired,
+}
+
 const Togglable = ({ children, buttonLabel, ref }) => {
   const [visible, setVisible] = useState(false)
 
@@ -163,6 +173,12 @@ const Togglable = ({ children, buttonLabel, ref }) => {
       </div>
     </>
   )
+}
+
+Togglable.propTypes = {
+  children: PropTypes.elementType.isRequired,
+  buttonLabel: PropTypes.string.isRequired,
+  ref: PropTypes.object.isRequired,
 }
 
 const BlogForm = ({ setBlogs, showMessage, ref }) => {
@@ -235,7 +251,18 @@ const BlogForm = ({ setBlogs, showMessage, ref }) => {
   )
 }
 
+BlogForm.propTypes = {
+  setBlogs: PropTypes.func.isRequired,
+  showMessage: PropTypes.func.isRequired,
+  ref: PropTypes.object.isRequired,
+}
+
 const Message = ({ status, text }) =>
   status && <div className={`message ${status}`}>{text}</div>
+
+Message.propTypes = {
+  status: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+}
 
 export default App
