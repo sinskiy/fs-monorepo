@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 import Blog from './Blog'
 import userEvent from '@testing-library/user-event'
-import BlogForm from './BlogForm'
 
 describe('blog is rendered correctly', () => {
   test('default view shows only title and author', async () => {
@@ -86,29 +85,5 @@ describe('blog behaves correctly', () => {
     await user.click(buttonAddsLike)
 
     expect(mockHandler.mock.calls).toHaveLength(2)
-  })
-})
-
-describe('blog form behaves correctly', () => {
-  test('blog form runs function on submit', async () => {
-    const user = userEvent.setup()
-    const mockHandler = vi.fn()
-
-    render(<BlogForm handleCreate={mockHandler} />)
-
-    const [title, author, url] = await screen.findAllByRole('textbox')
-    await user.type(title, 'testtitle')
-    await user.type(author, 'testauthor')
-    await user.type(url, 'https://example.com')
-
-    const submitButton = await screen.findByRole('button', { name: 'create' })
-    await user.click(submitButton)
-
-    expect(mockHandler.mock.calls).toHaveLength(1)
-    expect(mockHandler.mock.lastCall).toEqual([
-      'testtitle',
-      'testauthor',
-      'https://example.com',
-    ])
   })
 })
