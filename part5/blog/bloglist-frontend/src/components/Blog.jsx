@@ -2,7 +2,7 @@ import { useState } from 'react'
 import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, setBlogs, username }) => {
+const Blog = ({ blog, setBlogs, handleLikeClick, username }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -12,13 +12,6 @@ const Blog = ({ blog, setBlogs, username }) => {
   }
 
   const [isVisible, setIsVisible] = useState(false)
-
-  const handleLikeClick = async () => {
-    const response = await blogService.addLike(blog)
-    setBlogs(blogs =>
-      blogs.map(blog => (blog.id === response.id ? response : blog))
-    )
-  }
 
   const handleDeleteClick = async () => {
     const isConfirmed = window.confirm(
@@ -69,6 +62,7 @@ Blog.propTypes = {
   }),
   username: PropTypes.string.isRequired,
   setBlogs: PropTypes.func.isRequired,
+  handleLikeClick: PropTypes.func.isRequired,
 }
 
 export default Blog

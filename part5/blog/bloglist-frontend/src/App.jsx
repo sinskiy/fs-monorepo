@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import PropTypes from 'prop-types'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -113,7 +114,33 @@ const Blogs = ({ username, handleLogout }) => {
     blogService.getAll().then(blogs => setSortedBlogs(blogs))
   }, [])
 
+  const handleLikeClick = async blog => {
+    const response = await blogService.addLike(blog)
+    setBlogs(blogs =>
+      blogs.map(blog => (blog.id === response.id ? response : blog))
+    )
+  }
+
   const blogFormRef = useRef(null)
+
+  const handleCreate = async (title, author, url) => {
+    try {
+      const result = await blogService.create({ title, author, url })
+      setBlogs(blogs => [...blogs, result])
+
+      showMessage({
+        status: 'success',
+        text: `a new blog ${title} by ${author} added`,
+      })
+      blogFormRef.current.toggleVisibility()
+    } catch (err) {
+      console.log(err)
+      showMessage({
+        status: 'error',
+        text: `a new blog ${title} by ${author} couldn't be added`,
+      })
+    }
+  }
 
   return (
     <>
@@ -124,11 +151,7 @@ const Blogs = ({ username, handleLogout }) => {
           {username} logged in<button onClick={handleLogout}>logout</button>
         </p>
         <Togglable buttonLabel="new note" ref={blogFormRef}>
-          <BlogForm
-            setBlogs={setBlogs}
-            showMessage={showMessage}
-            ref={blogFormRef}
-          />
+          <BlogForm handleCreate={handleCreate} />
         </Togglable>
         {blogs.map(blog => (
           <Blog
@@ -136,6 +159,7 @@ const Blogs = ({ username, handleLogout }) => {
             key={blog.id}
             blog={blog}
             setBlogs={setBlogsThenSort}
+            handleLikeClick={handleLikeClick}
           />
         ))}
       </div>
@@ -178,82 +202,6 @@ const Togglable = ({ children, buttonLabel, ref }) => {
 Togglable.propTypes = {
   children: PropTypes.elementType.isRequired,
   buttonLabel: PropTypes.string.isRequired,
-  ref: PropTypes.object.isRequired,
-}
-
-const BlogForm = ({ setBlogs, showMessage, ref }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
-  const handleCreate = async e => {
-    e.preventDefault()
-
-    try {
-      const result = await blogService.create({ title, author, url })
-      setBlogs(blogs => [...blogs, result])
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-
-      showMessage({
-        status: 'success',
-        text: `a new blog ${title} by ${author} added`,
-      })
-      ref.current.toggleVisibility()
-    } catch (err) {
-      console.log(err)
-      showMessage({
-        status: 'error',
-        text: `a new blog ${title} by ${author} couldn't be added`,
-      })
-    }
-  }
-
-  return (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={handleCreate}>
-        <div>
-          <label htmlFor="title">title:</label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            value={title}
-            onChange={e => setTitle(e.currentTarget.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="author">author:</label>
-          <input
-            type="text"
-            name="author"
-            id="author"
-            value={author}
-            onChange={e => setAuthor(e.currentTarget.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="url">url:</label>
-          <input
-            type="url"
-            name="url"
-            id="url"
-            value={url}
-            onChange={e => setUrl(e.currentTarget.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
-  )
-}
-
-BlogForm.propTypes = {
-  setBlogs: PropTypes.func.isRequired,
-  showMessage: PropTypes.func.isRequired,
   ref: PropTypes.object.isRequired,
 }
 
