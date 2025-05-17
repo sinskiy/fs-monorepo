@@ -126,7 +126,12 @@ const Blogs = ({ username, handleLogout }) => {
           />
         </Togglable>
         {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} setBlogs={setBlogsThenSort} />
+          <Blog
+            username={username}
+            key={blog.id}
+            blog={blog}
+            setBlogs={setBlogsThenSort}
+          />
         ))}
       </div>
     </>
