@@ -20,8 +20,13 @@ const Blog = ({ blog, setBlogs, username }) => {
   }
 
   const handleDeleteClick = async () => {
-    await blogService.deletePost(blog.id)
-    setBlogs(blogs => blogs.filter(currentBlog => currentBlog.id !== blog.id))
+    const isConfirmed = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`
+    )
+    if (isConfirmed) {
+      await blogService.deletePost(blog.id)
+      setBlogs(blogs => blogs.filter(currentBlog => currentBlog.id !== blog.id))
+    }
   }
 
   return (
