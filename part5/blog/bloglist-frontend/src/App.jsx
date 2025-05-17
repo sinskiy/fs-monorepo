@@ -96,10 +96,16 @@ const Blogs = ({ username, handleLogout }) => {
   }
 
   const [blogs, setBlogs] = useState([])
-  console.log(blogs)
+
+  const setSortedBlogs = blogs =>
+    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
+  const setBlogsThenSort = updateBlogs => {
+    const newBlogs = updateBlogs(blogs)
+    setSortedBlogs(newBlogs)
+  }
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
+    blogService.getAll().then(blogs => setSortedBlogs(blogs))
   }, [])
 
   const blogFormRef = useRef(null)
@@ -120,7 +126,7 @@ const Blogs = ({ username, handleLogout }) => {
           />
         </Togglable>
         {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
+          <Blog key={blog.id} blog={blog} setBlogs={setBlogsThenSort} />
         ))}
       </div>
     </>
