@@ -25,9 +25,13 @@ export const userExtractor = async (request, response, next) => {
       const user = await User.findById(decodedToken.id)
       if (user) {
         request.user = user
+      } else {
+        console.log('user not found')
       }
     }
-  } catch {}
+  } catch {
+    console.log('error extracting user')
+  }
   next()
 }
 

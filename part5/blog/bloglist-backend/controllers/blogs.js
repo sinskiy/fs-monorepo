@@ -24,6 +24,7 @@ blogsRouter.post('/', async (request, response) => {
   const blogPromise = blog.save()
   const userPromise = request.user.save()
   const [result] = await Promise.all([blogPromise, userPromise])
+  result.user = request.user
 
   response.status(201).json(result)
 })

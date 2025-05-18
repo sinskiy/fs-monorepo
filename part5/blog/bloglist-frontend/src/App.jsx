@@ -116,7 +116,7 @@ const Blogs = ({ username, handleLogout }) => {
 
   const handleLikeClick = async blog => {
     const response = await blogService.addLike(blog)
-    setBlogs(blogs =>
+    setBlogsThenSort(blogs =>
       blogs.map(blog => (blog.id === response.id ? response : blog))
     )
   }

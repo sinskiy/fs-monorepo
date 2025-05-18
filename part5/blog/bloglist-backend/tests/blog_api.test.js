@@ -154,7 +154,6 @@ describe.skip('DELETE blog', () => {
     const newResponse = await api.get('/api/blogs')
 
     assert.strictEqual(newResponse.body.length, initialBlogs.length - 1)
-    console.log(initialBlogs.length - 1, newResponse.body)
 
     assert(newResponse.body.every(blog => blog.title !== blogToDelete.title))
   })
