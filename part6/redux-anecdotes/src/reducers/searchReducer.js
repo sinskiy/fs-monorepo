@@ -1,20 +1,14 @@
-const initialState = ''
+import { createSlice } from '@reduxjs/toolkit'
 
-const searchReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'SEARCH_UPDATE': {
-      return action.payload
-    }
-    default:
-      return state
-  }
-}
+const searchSlice = createSlice({
+  name: 'search',
+  initialState: '',
+  reducers: {
+    updateSearch(state, action) {
+      state = action.payload
+    },
+  },
+})
 
-export const updateSearch = newSearch => {
-  return {
-    type: 'SEARCH_UPDATE',
-    payload: newSearch,
-  }
-}
-
-export default searchReducer
+export const { updateSearch } = searchSlice.actions
+export default searchSlice.reducer
