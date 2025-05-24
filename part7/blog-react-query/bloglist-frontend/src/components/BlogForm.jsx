@@ -1,3 +1,4 @@
+import { Button, TextField, Typography, Box } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 
@@ -18,40 +19,47 @@ const BlogForm = ({ handleCreate }) => {
 
   return (
     <div>
-      <h2>create new</h2>
-      <form onSubmit={handleCreateSubmit}>
-        <div>
-          <label htmlFor="title">title:</label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            value={title}
-            onChange={e => setTitle(e.currentTarget.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="author">author:</label>
-          <input
-            type="text"
-            name="author"
-            id="author"
-            value={author}
-            onChange={e => setAuthor(e.currentTarget.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="url">url:</label>
-          <input
-            type="url"
-            name="url"
-            id="url"
-            value={url}
-            onChange={e => setUrl(e.currentTarget.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
+      <Typography variant="h5" component="h3">
+        create new
+      </Typography>
+      <Box
+        component="form"
+        onSubmit={handleCreateSubmit}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}
+        maxWidth="sm"
+      >
+        <TextField
+          type="text"
+          id="title"
+          label="title"
+          value={title}
+          onChange={e => setTitle(e.currentTarget.value)}
+          variant="outlined"
+        />
+        <TextField
+          type="text"
+          id="author"
+          label="author"
+          value={author}
+          onChange={e => setAuthor(e.currentTarget.value)}
+          variant="outlined"
+        />
+        <TextField
+          type="url"
+          id="url"
+          label="url"
+          value={url}
+          onChange={e => setUrl(e.currentTarget.value)}
+          variant="outlined"
+        />
+        <Button
+          variant="contained"
+          sx={{ maxWidth: 'fit-content' }}
+          type="submit"
+        >
+          create
+        </Button>
+      </Box>
     </div>
   )
 }

@@ -29,6 +29,12 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(result)
 })
 
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id).populate('user')
+  if (!blog) return response.status(404).json({ error: 'blog not found' })
+  response.json(blog)
+})
+
 blogsRouter.delete('/:id', async (request, response) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
@@ -55,6 +61,18 @@ blogsRouter.put('/:id', async (request, response) => {
   ).populate('user')
   if (blog) {
     blog.likes += 1
+    response.json(blog)
+  } else {
+    response.status(404).end()
+  }
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const blog = await Blog.findByIdAndUpdate(request.params.id, {
+    $push: { comments: request.body.text },
+  }).populate('user')
+  if (blog) {
+    blog.comments.push(request.body.text)
     response.json(blog)
   } else {
     response.status(404).end()

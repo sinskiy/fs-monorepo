@@ -1,50 +1,14 @@
-import { useState } from 'react'
-import blogService from '../services/blogs'
+import { Link as StyledLink, ListItemText } from '@mui/material'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router'
 
-const Blog = ({ blog, setBlogs, handleLikeClick, username }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
-  const [isVisible, setIsVisible] = useState(false)
-
-  const handleDeleteClick = async () => {
-    const isConfirmed = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author}`
-    )
-    if (isConfirmed) {
-      await blogService.deletePost(blog.id)
-      setBlogs(blogs => blogs.filter(currentBlog => currentBlog.id !== blog.id))
-    }
-  }
-
+const Blog = ({ blog }) => {
   return (
-    <div style={blogStyle}>
-      <div>
+    <ListItemText>
+      <StyledLink component={Link} to={`/blogs/${blog.id}`}>
         {blog.title} {blog.author}
-        <button onClick={() => setIsVisible(!isVisible)}>
-          {isVisible ? 'hide' : 'view'}
-        </button>
-      </div>
-      {isVisible && (
-        <>
-          <p>{blog.url}</p>
-          <p>
-            likes {blog.likes}
-            <button onClick={() => handleLikeClick(blog)}>like</button>
-          </p>
-          <p>{blog.user?.username}</p>
-          {blog.user?.username === username && (
-            <button onClick={handleDeleteClick}>remove</button>
-          )}
-        </>
-      )}
-    </div>
+      </StyledLink>
+    </ListItemText>
   )
 }
 
@@ -60,9 +24,6 @@ Blog.propTypes = {
       username: PropTypes.string.isRequired,
     }),
   }),
-  username: PropTypes.string.isRequired,
-  setBlogs: PropTypes.func.isRequired,
-  handleLikeClick: PropTypes.func.isRequired,
 }
 
 export default Blog
