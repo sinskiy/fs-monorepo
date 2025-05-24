@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from './reducers/notificationReducer'
+import { addBlog, setBlogs, updateBlog } from './reducers/blogsReducer'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -100,24 +101,15 @@ User.propTypes = {
 const Blogs = ({ username, handleLogout }) => {
   const dispatch = useDispatch()
 
-  const [blogs, setBlogs] = useState([])
-
-  const setSortedBlogs = blogs =>
-    setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-  const setBlogsThenSort = updateBlogs => {
-    const newBlogs = updateBlogs(blogs)
-    setSortedBlogs(newBlogs)
-  }
+  const blogs = useSelector(state => state.blogs)
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setSortedBlogs(blogs))
+    blogService.getAll().then(blogs => dispatch(setBlogs(blogs)))
   }, [])
 
   const handleLikeClick = async blog => {
     const response = await blogService.addLike(blog)
-    setBlogsThenSort(blogs =>
-      blogs.map(blog => (blog.id === response.id ? response : blog))
-    )
+    dispatch(updateBlog(response))
   }
 
   const blogFormRef = useRef(null)
@@ -125,7 +117,7 @@ const Blogs = ({ username, handleLogout }) => {
   const handleCreate = async (title, author, url) => {
     try {
       const result = await blogService.create({ title, author, url })
-      setBlogs(blogs => [...blogs, result])
+      dispatch(addBlog(result))
 
       dispatch(
         showNotification({
@@ -161,7 +153,6 @@ const Blogs = ({ username, handleLogout }) => {
             username={username}
             key={blog.id}
             blog={blog}
-            setBlogs={setBlogsThenSort}
             handleLikeClick={handleLikeClick}
           />
         ))}

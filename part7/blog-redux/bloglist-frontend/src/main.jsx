@@ -4,14 +4,14 @@ import './index.css'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import notificationReducer from './reducers/notificationReducer.js'
+import blogsReducer from './reducers/blogsReducer.js'
 
 const store = configureStore({
   reducer: {
     notification: notificationReducer,
+    blogs: blogsReducer,
   },
 })
-
-store.subscribe(() => console.log(store.getState()))
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>

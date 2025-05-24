@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
+import { useDispatch } from 'react-redux'
+import { deleteBlog } from '../reducers/blogsReducer'
 
-const Blog = ({ blog, setBlogs, handleLikeClick, username }) => {
+const Blog = ({ blog, handleLikeClick, username }) => {
+  const dispatch = useDispatch()
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -19,7 +23,7 @@ const Blog = ({ blog, setBlogs, handleLikeClick, username }) => {
     )
     if (isConfirmed) {
       await blogService.deletePost(blog.id)
-      setBlogs(blogs => blogs.filter(currentBlog => currentBlog.id !== blog.id))
+      dispatch(deleteBlog(blog.id))
     }
   }
 
