@@ -1,0 +1,18 @@
+GET http://localhost:3003/api/blogs
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjIyMiIsImlkIjoiNjgyMDgyY2Q2NmRiN2UzNmNjOTVjYzI0IiwiaWF0IjoxNzQ2OTYxMTA0LCJleHAiOjE3NDY5NjQ3MDR9.qg6wSw5EX52eJAp1XyCfAUfeA5-rJf9EiNHtw8q5Fok
+
+{
+    "title": "test",
+    "author": "test",
+    "url": "https://example.com",
+    "likes": 0
+}
+###
+DELETE http://localhost:3003/api/blogs/682083a86968ef61ee4a0211
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjIyMiIsImlkIjoiNjgyMDgyY2Q2NmRiN2UzNmNjOTVjYzI0IiwiaWF0IjoxNzQ2OTYxMTA0LCJleHAiOjE3NDY5NjQ3MDR9.qg6wSw5EX52eJAp1XyCfAUfeA5-rJf9EiNHtw8q5Fok
+
+###
+GET http://localhost:3003/api
