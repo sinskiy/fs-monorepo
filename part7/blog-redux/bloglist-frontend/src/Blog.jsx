@@ -39,6 +39,13 @@ const Blog = () => {
     queryClient.invalidateQueries({ queryKey: ['blogs', id] })
   }
 
+  const handleComment = async e => {
+    e.preventDefault()
+    await blogService.addComment(data.id, { text: e.target.comment.value })
+    e.target.comment.value = ''
+    queryClient.invalidateQueries({ queryKey: ['blogs', id] })
+  }
+
   return (
     <>
       <h1>{data.title}</h1>
@@ -50,6 +57,23 @@ const Blog = () => {
       <p>{data.user?.username}</p>
       {username && data.user?.username === username && (
         <button onClick={handleDeleteClick}>remove</button>
+      )}
+      <h3>comments</h3>
+      <form onSubmit={handleComment}>
+        <label htmlFor="comment" className="sr-only">
+          comment
+        </label>
+        <input type="text" name="comment" id="comment" />
+        <button type="submit">add comment</button>
+      </form>
+      {data.comments.length > 0 ? (
+        <ul>
+          {data.comments.map((comment, i) => (
+            <li key={i}>{comment}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>no comments yet :c</p>
       )}
     </>
   )
