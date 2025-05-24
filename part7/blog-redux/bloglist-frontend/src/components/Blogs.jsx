@@ -4,7 +4,7 @@ import BlogForm from './BlogForm'
 import Togglable from './Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
-import { addBlog, setBlogs, updateBlog } from '../reducers/blogsReducer'
+import { addBlog, setBlogs } from '../reducers/blogsReducer'
 import { showNotification } from '../reducers/notificationReducer'
 import blogService from '../services/blogs'
 
@@ -16,11 +16,6 @@ const Blogs = () => {
   useEffect(() => {
     blogService.getAll().then(blogs => dispatch(setBlogs(blogs)))
   }, [])
-
-  const handleLikeClick = async blog => {
-    const response = await blogService.addLike(blog)
-    dispatch(updateBlog(response))
-  }
 
   const blogFormRef = useRef(null)
 
@@ -53,7 +48,7 @@ const Blogs = () => {
         <BlogForm handleCreate={handleCreate} />
       </Togglable>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} handleLikeClick={handleLikeClick} />
+        <Blog key={blog.id} blog={blog} />
       ))}
     </>
   )

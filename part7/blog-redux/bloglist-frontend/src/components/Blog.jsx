@@ -1,14 +1,7 @@
-import { useState } from 'react'
-import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
-import { useDispatch, useSelector } from 'react-redux'
-import { deleteBlog } from '../reducers/blogsReducer'
+import { Link } from 'react-router'
 
-const Blog = ({ blog, handleLikeClick }) => {
-  const dispatch = useDispatch()
-
-  const username = useSelector(state => state.user.username)
-
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -17,39 +10,11 @@ const Blog = ({ blog, handleLikeClick }) => {
     marginBottom: 5,
   }
 
-  const [isVisible, setIsVisible] = useState(false)
-
-  const handleDeleteClick = async () => {
-    const isConfirmed = window.confirm(
-      `Remove blog ${blog.title} by ${blog.author}`
-    )
-    if (isConfirmed) {
-      await blogService.deletePost(blog.id)
-      dispatch(deleteBlog(blog.id))
-    }
-  }
-
   return (
     <div style={blogStyle}>
-      <div>
+      <Link to={`/blogs/${blog.id}`}>
         {blog.title} {blog.author}
-        <button onClick={() => setIsVisible(!isVisible)}>
-          {isVisible ? 'hide' : 'view'}
-        </button>
-      </div>
-      {isVisible && (
-        <>
-          <p>{blog.url}</p>
-          <p>
-            likes {blog.likes}
-            <button onClick={() => handleLikeClick(blog)}>like</button>
-          </p>
-          <p>{blog.user?.username}</p>
-          {blog.user?.username === username && (
-            <button onClick={handleDeleteClick}>remove</button>
-          )}
-        </>
-      )}
+      </Link>
     </div>
   )
 }
@@ -66,9 +31,6 @@ Blog.propTypes = {
       username: PropTypes.string.isRequired,
     }),
   }),
-  username: PropTypes.string.isRequired,
-  setBlogs: PropTypes.func.isRequired,
-  handleLikeClick: PropTypes.func.isRequired,
 }
 
 export default Blog
