@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router'
+import { Link, Outlet } from 'react-router'
 import Message from './components/Message'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from './reducers/userReducer'
@@ -28,18 +28,31 @@ const Layout = () => {
   }
 
   return (
-    <div>
-      {username && (
-        <>
-          <h2>Blogs</h2>
-          <Message />
-          <p>
-            {username} logged in<button onClick={handleLogout}>logout</button>
-          </p>
-        </>
-      )}
-      <Outlet />
-    </div>
+    <>
+      <header>
+        <nav
+          style={{
+            backgroundColor: 'lightgray',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Link to="/">blogs</Link>
+          <Link to="/users">users</Link>
+          {username && (
+            <>
+              <p>{username} logged in</p>
+              <button onClick={handleLogout}>logout</button>
+            </>
+          )}
+        </nav>
+      </header>
+      <main>
+        <h2>blog app</h2>
+        <Message />
+        <Outlet />
+      </main>
+    </>
   )
 }
 
