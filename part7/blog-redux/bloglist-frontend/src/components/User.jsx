@@ -5,6 +5,7 @@ import Message from '../components/Message'
 import { useDispatch } from 'react-redux'
 import blogService from '../services/blogs'
 import { setUser } from '../reducers/userReducer'
+import { Box, Button, TextField, Typography } from '@mui/material'
 
 const User = () => {
   const dispatch = useDispatch()
@@ -36,31 +37,36 @@ const User = () => {
   return (
     <>
       <div>
-        <h2>log in to application</h2>
+        <Typography variant="h5" component="h3">
+          log in to application
+        </Typography>
         <Message />
-        <form onSubmit={handleLogin}>
-          <div>
-            <label htmlFor="username">username</label>
-            <input
-              type="text"
-              name="username"
-              id="username"
-              value={username}
-              onChange={e => setUsername(e.currentTarget.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="password">password</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={password}
-              onChange={e => setPassword(e.currentTarget.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
+        <Box
+          component="form"
+          onSubmit={handleLogin}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}
+          maxWidth="sm"
+        >
+          <TextField
+            type="text"
+            id="username"
+            label="username"
+            value={username}
+            onChange={e => setUsername(e.currentTarget.value)}
+            variant="outlined"
+          />
+          <TextField
+            type="password"
+            id="password"
+            label="password"
+            value={password}
+            onChange={e => setPassword(e.currentTarget.value)}
+            variant="outlined"
+          />
+          <Button variant="contained" type="submit">
+            login
+          </Button>
+        </Box>
       </div>
     </>
   )

@@ -1,6 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import userService from './services/users'
 import { Link } from 'react-router'
+import TableContainer from '@mui/material/TableContainer'
+import StyledLink from '@mui/material/Link'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material'
 
 const Users = () => {
   const { data, status, error } = useQuery({
@@ -9,34 +20,48 @@ const Users = () => {
   })
 
   if (status === 'pending') {
-    return <p>loading users</p>
+    return (
+      <Typography variant="body1" component="p">
+        loading users
+      </Typography>
+    )
   }
 
   if (status === 'error') {
-    return <p>error: {error.message}</p>
+    return (
+      <Typography variant="body1" component="p">
+        error: {error.message}
+      </Typography>
+    )
   }
 
   return (
     <>
-      <h3>Users</h3>
-      <table>
-        <thead>
-          <tr>
-            <td></td>
-            <th>blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(user => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.username}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Typography variant="h5" component="h2">
+        Users
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>blogs created</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map(user => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <StyledLink component={Link} to={`/users/${user.id}`}>
+                    {user.username}
+                  </StyledLink>
+                </TableCell>
+                <TableCell>{user.blogs.length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   )
 }

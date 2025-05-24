@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react'
 import { addBlog, setBlogs } from '../reducers/blogsReducer'
 import { showNotification } from '../reducers/notificationReducer'
 import blogService from '../services/blogs'
+import { List, ListItem } from '@mui/material'
 
 const Blogs = () => {
   const dispatch = useDispatch()
@@ -47,9 +48,13 @@ const Blogs = () => {
       <Togglable buttonLabel="new note" ref={blogFormRef}>
         <BlogForm handleCreate={handleCreate} />
       </Togglable>
-      {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <List>
+        {blogs.map(blog => (
+          <ListItem key={blog.id}>
+            <Blog blog={blog} />
+          </ListItem>
+        ))}
+      </List>
     </>
   )
 }

@@ -1,7 +1,20 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import blogService from './services/blogs'
 import { useSelector } from 'react-redux'
+import Button from '@mui/material/Button'
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Link as StyledLink,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+} from '@mui/material'
 
 const Blog = () => {
   const queryClient = useQueryClient()
@@ -17,11 +30,19 @@ const Blog = () => {
   })
 
   if (status === 'pending') {
-    return <p>loading blog</p>
+    return (
+      <Typography variant="body1" component="p">
+        loading blog
+      </Typography>
+    )
   }
 
   if (status === 'error') {
-    return <p>error: {error.message}</p>
+    return (
+      <Typography variant="body1" component="p">
+        error: {error.message}
+      </Typography>
+    )
   }
 
   const handleDeleteClick = async () => {
@@ -48,32 +69,70 @@ const Blog = () => {
 
   return (
     <>
-      <h1>{data.title}</h1>
-      <p>{data.url}</p>
-      <p>
-        likes {data.likes}
-        <button onClick={handleLikeClick}>like</button>
-      </p>
-      <p>{data.user?.username}</p>
-      {username && data.user?.username === username && (
-        <button onClick={handleDeleteClick}>remove</button>
-      )}
-      <h3>comments</h3>
-      <form onSubmit={handleComment}>
-        <label htmlFor="comment" className="sr-only">
-          comment
-        </label>
-        <input type="text" name="comment" id="comment" />
-        <button type="submit">add comment</button>
-      </form>
+      <Card>
+        <CardContent>
+          <Typography variant="h4" component="h2">
+            {data.title}
+          </Typography>
+          <StyledLink to={data.url} component={Link}>
+            {data.url}
+          </StyledLink>
+          <Typography
+            variant="overline"
+            component="p"
+            sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}
+          >
+            likes {data.likes}
+            <Button variant="outlined" onClick={handleLikeClick}>
+              like
+            </Button>
+          </Typography>
+          <Typography variant="body1" component="p">
+            {data.user?.username}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          {username && data.user?.username === username && (
+            <Button variant="outlined" onClick={handleDeleteClick}>
+              remove
+            </Button>
+          )}
+        </CardActions>
+      </Card>
+      <Typography variant="h5" component="h3" sx={{ mt: 2 }}>
+        comments
+      </Typography>
+      <Box
+        component="form"
+        sx={{ display: 'flex', flexDirection: 'column' }}
+        onSubmit={handleComment}
+      >
+        <TextField
+          type="text"
+          id="comment"
+          label="comment"
+          variant="outlined"
+        />
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{ maxWidth: 'fit-content', mt: 1 }}
+        >
+          add comment
+        </Button>
+      </Box>
       {data.comments.length > 0 ? (
-        <ul>
+        <List>
           {data.comments.map((comment, i) => (
-            <li key={i}>{comment}</li>
+            <ListItem key={i}>
+              <ListItemText primary={comment} />
+            </ListItem>
           ))}
-        </ul>
+        </List>
       ) : (
-        <p>no comments yet :c</p>
+        <Typography variant="body1" component="p">
+          no comments yet :c
+        </Typography>
       )}
     </>
   )

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 import userService from './services/users'
+import { List, ListItem, ListItemText, Typography } from '@mui/material'
 
 const User = () => {
   const { id } = useParams()
@@ -11,25 +12,41 @@ const User = () => {
   })
 
   if (status === 'pending') {
-    return <p>loading user</p>
+    return (
+      <Typography variant="body1" component="p">
+        loading user
+      </Typography>
+    )
   }
 
   if (status === 'error') {
-    return <p>error: {error.message}</p>
+    return (
+      <Typography variant="body1" component="p">
+        error: {error.message}
+      </Typography>
+    )
   }
 
   return (
     <>
-      <h1>{data.username}</h1>
-      <h3>added blogs</h3>
+      <Typography variant="h4" component="h2">
+        {data.username}
+      </Typography>
+      <Typography variant="h5" component="h3">
+        added blogs
+      </Typography>
       {data.blogs.length > 0 ? (
-        <ul>
+        <List>
           {data.blogs.map(blog => (
-            <li key={blog.id}>{blog.title}</li>
+            <ListItem key={blog.id}>
+              <ListItemText>{blog.title}</ListItemText>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       ) : (
-        <p>no blogs yet</p>
+        <Typography variant="body1" component="p">
+          no blogs yet
+        </Typography>
       )}
     </>
   )
