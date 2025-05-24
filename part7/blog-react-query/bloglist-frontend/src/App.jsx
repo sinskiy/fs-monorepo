@@ -4,8 +4,6 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import PropTypes from 'prop-types'
 import BlogForm from './components/BlogForm'
-import { useDispatch, useSelector } from 'react-redux'
-import { showNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -35,7 +33,11 @@ const App = () => {
 }
 
 const User = ({ setUser }) => {
-  const dispatch = useDispatch()
+  const [message, setMessage] = useState(null)
+  const showMessage = message => {
+    setMessage(message)
+    setTimeout(() => setMessage(null), 5000)
+  }
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -52,19 +54,14 @@ const User = ({ setUser }) => {
       setUsername('')
       setPassword('')
     } catch {
-      dispatch(
-        showNotification({
-          status: 'error',
-          text: 'wrong username or password',
-        })
-      )
+      showMessage({ status: 'error', text: 'wrong username or password' })
     }
   }
   return (
     <>
       <div>
         <h2>log in to application</h2>
-        <Message />
+        <Message status={message?.status} text={message?.text} />
         <form onSubmit={handleLogin}>
           <div>
             <label htmlFor="username">username</label>
@@ -98,7 +95,11 @@ User.propTypes = {
 }
 
 const Blogs = ({ username, handleLogout }) => {
-  const dispatch = useDispatch()
+  const [message, setMessage] = useState(null)
+  const showMessage = message => {
+    setMessage(message)
+    setTimeout(() => setMessage(null), 5000)
+  }
 
   const [blogs, setBlogs] = useState([])
 
@@ -127,21 +128,17 @@ const Blogs = ({ username, handleLogout }) => {
       const result = await blogService.create({ title, author, url })
       setBlogs(blogs => [...blogs, result])
 
-      dispatch(
-        showNotification({
-          status: 'success',
-          text: `a new blog ${title} by ${author} added`,
-        })
-      )
+      showMessage({
+        status: 'success',
+        text: `a new blog ${title} by ${author} added`,
+      })
       blogFormRef.current.toggleVisibility()
     } catch (err) {
       console.log(err)
-      dispatch(
-        showNotification({
-          status: 'error',
-          text: `a new blog ${title} by ${author} couldn't be added`,
-        })
-      )
+      showMessage({
+        status: 'error',
+        text: `a new blog ${title} by ${author} couldn't be added`,
+      })
     }
   }
 
@@ -149,7 +146,7 @@ const Blogs = ({ username, handleLogout }) => {
     <>
       <div>
         <h2>blogs</h2>
-        <Message />
+        <Message status={message?.status} text={message?.text} />
         <p>
           {username} logged in<button onClick={handleLogout}>logout</button>
         </p>
@@ -208,16 +205,8 @@ Togglable.propTypes = {
   ref: PropTypes.object.isRequired,
 }
 
-const Message = () => {
-  const notification = useSelector(state => state.notification)
-  if (notification.text) {
-    return (
-      <div className={`message ${notification.status}`}>
-        {notification.text}
-      </div>
-    )
-  }
-}
+const Message = ({ status, text }) =>
+  status && <div className={`message ${status}`}>{text}</div>
 
 Message.propTypes = {
   status: PropTypes.string.isRequired,
