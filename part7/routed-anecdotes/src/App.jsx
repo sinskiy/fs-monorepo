@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 import {
   BrowserRouter,
   Link,
@@ -6,12 +6,13 @@ import {
   Routes,
   useNavigate,
   useParams,
-} from "react-router";
+} from 'react-router'
+import { useField } from './hooks'
 
 const Menu = () => {
   const padding = {
     paddingRight: 5,
-  };
+  }
   return (
     <div>
       <Link to="/anecdotes" style={padding}>
@@ -24,25 +25,25 @@ const Menu = () => {
         about
       </Link>
     </div>
-  );
-};
+  )
+}
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map((anecdote) => (
+      {anecdotes.map(anecdote => (
         <li key={anecdote.id}>
           <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
         </li>
       ))}
     </ul>
   </div>
-);
+)
 
 const Anecdote = ({ anecdotes }) => {
-  const { id } = useParams();
-  const anecdote = anecdotes.find((anecdote) => String(anecdote.id) === id);
+  const { id } = useParams()
+  const anecdote = anecdotes.find(anecdote => String(anecdote.id) === id)
   return (
     <>
       <h2>{anecdote.content}</h2>
@@ -51,8 +52,8 @@ const Anecdote = ({ anecdotes }) => {
         for more info see <a href={anecdote.info}>{anecdote.info}</a>
       </p>
     </>
-  );
-};
+  )
+}
 
 const About = () => (
   <div>
@@ -74,36 +75,42 @@ const About = () => (
       find the best and add more.
     </p>
   </div>
-);
+)
 
 const Footer = () => (
   <div>
     Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
-    See{" "}
+    See{' '}
     <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
       https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
-    </a>{" "}
+    </a>{' '}
     for the source code.
   </div>
-);
+)
 
-const CreateNew = (props) => {
-  const navigate = useNavigate();
+const CreateNew = props => {
+  const navigate = useNavigate()
 
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  const [content, resetContent] = useField('text')
+  const [author, resetAuthor] = useField('text')
+  const [info, resetInfo] = useField('text')
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = e => {
+    e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
-    });
-    navigate("/anecdotes");
-  };
+    })
+    navigate('/anecdotes')
+  }
+
+  const handleReset = () => {
+    resetContent()
+    resetAuthor()
+    resetInfo()
+  }
 
   return (
     <div>
@@ -111,72 +118,63 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+          <input name="content" {...content} />
         </div>
         <div>
           author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+          <input name="author" {...author} />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
+          <input name="info" {...info} />
         </div>
         <button>create</button>
+        <button type="button" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
-  );
-};
+  )
+}
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
-      content: "If it hurts, do it more often",
-      author: "Jez Humble",
-      info: "https://martinfowler.com/bliki/FrequencyReducesDifficulty.html",
+      content: 'If it hurts, do it more often',
+      author: 'Jez Humble',
+      info: 'https://martinfowler.com/bliki/FrequencyReducesDifficulty.html',
       votes: 0,
       id: 1,
     },
     {
-      content: "Premature optimization is the root of all evil",
-      author: "Donald Knuth",
-      info: "http://wiki.c2.com/?PrematureOptimization",
+      content: 'Premature optimization is the root of all evil',
+      author: 'Donald Knuth',
+      info: 'http://wiki.c2.com/?PrematureOptimization',
       votes: 0,
       id: 2,
     },
-  ]);
+  ])
 
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] = useState('')
 
-  const addNew = (anecdote) => {
-    anecdote.id = Math.round(Math.random() * 10000);
-    setAnecdotes(anecdotes.concat(anecdote));
-    setNotification(`a new anecdote ${anecdote.content} created!`);
-  };
+  const addNew = anecdote => {
+    anecdote.id = Math.round(Math.random() * 10000)
+    setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+  }
 
-  const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
+  const anecdoteById = id => anecdotes.find(a => a.id === id)
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id);
+  const vote = id => {
+    const anecdote = anecdoteById(id)
 
     const voted = {
       ...anecdote,
       votes: anecdote.votes + 1,
-    };
+    }
 
-    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-  };
+    setAnecdotes(anecdotes.map(a => (a.id === id ? voted : a)))
+  }
 
   return (
     <BrowserRouter>
@@ -199,7 +197,7 @@ const App = () => {
         <Footer />
       </div>
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default App;
+export default App
