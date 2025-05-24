@@ -3,11 +3,21 @@ import Message from './components/Message'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from './reducers/userReducer'
 import blogService from './services/blogs'
+import { useEffect } from 'react'
 
 const Layout = () => {
   const dispatch = useDispatch()
 
   const username = useSelector(state => state.user?.username)
+
+  useEffect(() => {
+    const loggedUserJSON = localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      dispatch(setUser(user))
+      blogService.setToken(user.token)
+    }
+  }, [])
 
   const handleLogout = e => {
     e.preventDefault()

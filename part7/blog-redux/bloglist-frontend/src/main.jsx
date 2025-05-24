@@ -8,6 +8,10 @@ import blogsReducer from './reducers/blogsReducer.js'
 import userReducer from './reducers/userReducer.js'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import Layout from './Layout.jsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Users from './Users.jsx'
+
+const queryClient = new QueryClient()
 
 const store = configureStore({
   reducer: {
@@ -18,13 +22,16 @@ const store = configureStore({
 })
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<App />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </Provider>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path="users" element={<Users />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
+  </QueryClientProvider>
 )
