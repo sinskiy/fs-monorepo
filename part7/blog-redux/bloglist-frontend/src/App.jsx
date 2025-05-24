@@ -7,15 +7,18 @@ import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { showNotification } from './reducers/notificationReducer'
 import { addBlog, setBlogs, updateBlog } from './reducers/blogsReducer'
+import { setUser } from './reducers/userReducer'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
+
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -23,19 +26,19 @@ const App = () => {
   const handleLogout = e => {
     e.preventDefault()
 
-    setUser(null)
+    dispatch(setUser(null))
     blogService.setToken(null)
     window.localStorage.removeItem('loggedBlogappUser')
   }
 
   if (user === null) {
-    return <User setUser={setUser} />
+    return <User />
   }
 
-  return <Blogs username={user?.username} handleLogout={handleLogout} />
+  return <Blogs handleLogout={handleLogout} />
 }
 
-const User = ({ setUser }) => {
+const User = () => {
   const dispatch = useDispatch()
 
   const [username, setUsername] = useState('')
@@ -49,7 +52,7 @@ const User = ({ setUser }) => {
 
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
     } catch {
@@ -94,12 +97,10 @@ const User = ({ setUser }) => {
   )
 }
 
-User.propTypes = {
-  setUser: PropTypes.func.isRequired,
-}
-
-const Blogs = ({ username, handleLogout }) => {
+const Blogs = ({ handleLogout }) => {
   const dispatch = useDispatch()
+
+  const username = useSelector(state => state.user.username)
 
   const blogs = useSelector(state => state.blogs)
 
@@ -149,20 +150,13 @@ const Blogs = ({ username, handleLogout }) => {
           <BlogForm handleCreate={handleCreate} />
         </Togglable>
         {blogs.map(blog => (
-          <Blog
-            username={username}
-            key={blog.id}
-            blog={blog}
-            handleLikeClick={handleLikeClick}
-          />
+          <Blog key={blog.id} blog={blog} handleLikeClick={handleLikeClick} />
         ))}
       </div>
     </>
   )
 }
-
 Blogs.propTypes = {
-  username: PropTypes.string.isRequired,
   handleLogout: PropTypes.func.isRequired,
 }
 
@@ -192,7 +186,6 @@ const Togglable = ({ children, buttonLabel, ref }) => {
     </>
   )
 }
-
 Togglable.propTypes = {
   children: PropTypes.elementType.isRequired,
   buttonLabel: PropTypes.string.isRequired,
@@ -208,11 +201,6 @@ const Message = () => {
       </div>
     )
   }
-}
-
-Message.propTypes = {
-  status: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
 }
 
 export default App

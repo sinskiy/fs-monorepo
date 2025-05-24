@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { deleteBlog } from '../reducers/blogsReducer'
 
-const Blog = ({ blog, handleLikeClick, username }) => {
+const Blog = ({ blog, handleLikeClick }) => {
   const dispatch = useDispatch()
+
+  const username = useSelector(state => state.user.username)
 
   const blogStyle = {
     paddingTop: 10,
