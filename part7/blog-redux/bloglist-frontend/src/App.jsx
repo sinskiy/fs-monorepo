@@ -19,19 +19,11 @@ const App = () => {
     }
   }, [])
 
-  const handleLogout = e => {
-    e.preventDefault()
-
-    dispatch(setUser(null))
-    blogService.setToken(null)
-    window.localStorage.removeItem('loggedBlogappUser')
-  }
-
   if (user === null) {
     return <User />
   }
 
-  return <Blogs handleLogout={handleLogout} />
+  return <Blogs />
 }
 
 export default App

@@ -6,6 +6,8 @@ import { Provider } from 'react-redux'
 import notificationReducer from './reducers/notificationReducer.js'
 import blogsReducer from './reducers/blogsReducer.js'
 import userReducer from './reducers/userReducer.js'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import Layout from './Layout.jsx'
 
 const store = configureStore({
   reducer: {
@@ -17,6 +19,12 @@ const store = configureStore({
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<App />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </Provider>
 )

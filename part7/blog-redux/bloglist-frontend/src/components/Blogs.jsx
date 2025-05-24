@@ -2,17 +2,14 @@ import PropTypes from 'prop-types'
 import Blog from './Blog'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
-import Message from './Message'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { addBlog, setBlogs, updateBlog } from '../reducers/blogsReducer'
 import { showNotification } from '../reducers/notificationReducer'
 import blogService from '../services/blogs'
 
-const Blogs = ({ handleLogout }) => {
+const Blogs = () => {
   const dispatch = useDispatch()
-
-  const username = useSelector(state => state.user.username)
 
   const blogs = useSelector(state => state.blogs)
 
@@ -52,19 +49,12 @@ const Blogs = ({ handleLogout }) => {
 
   return (
     <>
-      <div>
-        <h2>blogs</h2>
-        <Message />
-        <p>
-          {username} logged in<button onClick={handleLogout}>logout</button>
-        </p>
-        <Togglable buttonLabel="new note" ref={blogFormRef}>
-          <BlogForm handleCreate={handleCreate} />
-        </Togglable>
-        {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} handleLikeClick={handleLikeClick} />
-        ))}
-      </div>
+      <Togglable buttonLabel="new note" ref={blogFormRef}>
+        <BlogForm handleCreate={handleCreate} />
+      </Togglable>
+      {blogs.map(blog => (
+        <Blog key={blog.id} blog={blog} handleLikeClick={handleLikeClick} />
+      ))}
     </>
   )
 }
