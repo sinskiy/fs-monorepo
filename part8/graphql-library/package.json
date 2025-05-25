@@ -1,0 +1,13 @@
+{
+  "name": "graphql-library",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.12.1"
+  }
+}
