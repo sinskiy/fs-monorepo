@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { GET_BOOKS, GET_FAVORITE_GENRE } from '../queries'
+import { ALL_BOOKS, GET_FAVORITE_GENRE } from '../queries'
 import PropTypes from 'prop-types'
 
 const Recommendations = () => {
@@ -19,7 +19,7 @@ const Recommendations = () => {
 }
 
 const Books = ({ favoriteGenre }) => {
-  const books = useQuery(GET_BOOKS, {
+  const books = useQuery(ALL_BOOKS, {
     variables: { genre: favoriteGenre },
   })
 

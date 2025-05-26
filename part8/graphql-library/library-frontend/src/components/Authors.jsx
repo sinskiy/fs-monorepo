@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { GET_AUTHORS, SET_BIRTHYEAR } from '../queries'
+import { ALL_AUTHORS, SET_BIRTHYEAR } from '../queries'
 
 const Authors = () => {
-  const authors = useQuery(GET_AUTHORS)
+  const authors = useQuery(ALL_AUTHORS)
 
   const [setBirthyear] = useMutation(SET_BIRTHYEAR, {
-    refetchQueries: [{ query: GET_AUTHORS }],
+    refetchQueries: [{ query: ALL_AUTHORS }],
   })
 
   if (authors.loading) {
