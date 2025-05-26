@@ -15,6 +15,13 @@ const typeDefs = `
     born: Int
   }
 
+  type AuthorWithBookCount {
+    name: String!
+    id: ID!
+    born: Int
+    bookCount: Int!
+  }
+
   type Book {
     title: String!
     published: Int!
@@ -27,7 +34,7 @@ const typeDefs = `
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
-    allAuthors: [Author!]!
+    allAuthors: [AuthorWithBookCount!]!
     me: User
   }
 

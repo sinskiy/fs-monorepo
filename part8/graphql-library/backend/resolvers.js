@@ -19,7 +19,15 @@ const resolvers = {
         ? books.filter(book => book.author.name === args.author)
         : books
     },
-    allAuthors: async () => Author.find(),
+    allAuthors: async () => {
+      const authors = await Author.find().populate('books')
+      const authorsWithBookCount = authors.map(author => ({
+        ...author,
+        books: undefined,
+        bookCount: author.books.length,
+      }))
+      return authorsWithBookCount
+    },
     me: (root, args, context) => context.currentUser,
   },
   Mutation: {
