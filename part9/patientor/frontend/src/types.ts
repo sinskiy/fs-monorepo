@@ -14,7 +14,7 @@ interface EntryBase {
   id: string;
   description: string;
   date: string;
-  specialist: "MD House" | "Dr Byte House";
+  specialist: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
@@ -28,7 +28,7 @@ export interface HospitalEntry extends EntryBase {
 
 export interface OccupationalHealthcareEntry extends EntryBase {
   type: "OccupationalHealthcare";
-  employerName: "HyPD" | "FBI";
+  employerName: string;
   sickLeave?: {
     startDate: string;
     endDate: string;
@@ -63,6 +63,8 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export type EntryFormValues = Omit<HealthCheckEntry, "id">;
 
 export const assertNever = (value: never): never => {
   throw new Error(

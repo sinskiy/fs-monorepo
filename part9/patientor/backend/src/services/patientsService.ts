@@ -1,8 +1,8 @@
 import patientsData from '../../data/patients'
-import { NewPatientEntry, NonSensitivePatient, Patient } from '../types'
+import { NewEntry, NewPatient, NonSensitivePatient, Patient } from '../types'
 import { randomUUID } from 'node:crypto'
 
-const patients = patientsData as Patient[]
+const patients = patientsData
 
 const getEntries = (): NonSensitivePatient[] => {
   return patients.map(({ ssn: _ssn, ...rest }) => rest)
@@ -13,15 +13,20 @@ const findById = (id: string): Patient | undefined => {
   return patient
 }
 
-const addPatient = (entry: NewPatientEntry): Patient => {
-  const newPatientEntry = {
+const addPatient = (entry: NewPatient): Patient => {
+  const newPatient = {
     id: randomUUID(),
     entries: [],
     ...entry,
   }
 
-  patients.push(newPatientEntry)
-  return newPatientEntry
+  patients.push(newPatient)
+  return newPatient
 }
 
-export default { getEntries, findById, addPatient }
+const addEntry = (patient: Patient, entry: NewEntry): Patient => {
+  patient.entries.push({ ...entry, id: randomUUID() })
+  return patient
+}
+
+export default { getEntries, findById, addPatient, addEntry }

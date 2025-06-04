@@ -6,9 +6,9 @@ import {
   Request,
 } from 'express'
 import { z } from 'zod'
-import { NewPatientEntry, NonSensitivePatient, Patient } from '../types'
+import { NewEntry, NewPatient, NonSensitivePatient, Patient } from '../types'
 import patientsService from '../services/patientsService'
-import { newEntrySchema } from '../utils'
+import { newEntrySchema, newPatientSchema } from '../utils'
 
 const patientsRouter = Router()
 
@@ -18,7 +18,7 @@ patientsRouter.get('/', (_req, res: Response<NonSensitivePatient[]>) => {
 
 const newPatientParse: RequestHandler = (req, _res, next) => {
   try {
-    newEntrySchema.parse(req.body)
+    newPatientSchema.parse(req.body)
     next()
   } catch (error) {
     next(error)
@@ -28,9 +28,9 @@ const newPatientParse: RequestHandler = (req, _res, next) => {
 patientsRouter.post(
   '/',
   newPatientParse,
-  (req: Request<unknown, unknown, NewPatientEntry>, res: Response<Patient>) => {
-    const addedEntry = patientsService.addPatient(req.body)
-    res.json(addedEntry)
+  (req: Request<unknown, unknown, NewPatient>, res: Response<Patient>) => {
+    const addedPatient = patientsService.addPatient(req.body)
+    res.json(addedPatient)
   }
 )
 
@@ -42,6 +42,33 @@ patientsRouter.get('/:id', (req, res) => {
     res.status(404).json({ error: 'patient not found' })
   }
 })
+
+const newEntryParse: RequestHandler = (req, _res, next) => {
+  try {
+    newEntrySchema.parse(req.body)
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+patientsRouter.post(
+  '/:id/entries',
+  newEntryParse,
+  (
+    req: Request<{ id: string }, unknown, NewEntry>,
+    res: Response<Patient | { error: string }>
+  ) => {
+    const patient = patientsService.findById(req.params.id)
+    if (!patient) {
+      res.status(404).json({ error: 'patient not found' })
+      return
+    }
+
+    const changedPatient = patientsService.addEntry(patient, req.body)
+    res.json(changedPatient)
+  }
+)
 
 const errorMiddleware: ErrorRequestHandler = (error, _req, res, next) => {
   if (error instanceof z.ZodError) {

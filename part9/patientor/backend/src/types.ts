@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { newEntrySchema } from './utils'
+import { newPatientSchema } from './utils'
 
 export interface Diagnosis {
   code: string
@@ -17,7 +17,7 @@ interface EntryBase {
   id: string
   description: string
   date: string
-  specialist: 'MD House' | 'Dr Byte House'
+  specialist: string
   diagnosisCodes?: Array<Diagnosis['code']>
 }
 
@@ -31,7 +31,7 @@ interface HospitalEntry extends EntryBase {
 
 interface OccupationalHealthcareEntry extends EntryBase {
   type: 'OccupationalHealthcare'
-  employerName: 'HyPD' | 'FBI'
+  employerName: string
   sickLeave?: {
     startDate: string
     endDate: string
@@ -55,9 +55,15 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry
 
-export type NewPatientEntry = z.infer<typeof newEntrySchema>
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never
 
-export interface Patient extends NewPatientEntry {
+export type NewEntry = UnionOmit<Entry, 'id'>
+
+export type NewPatient = z.infer<typeof newPatientSchema>
+
+export interface Patient extends NewPatient {
   id: string
   entries: Entry[]
 }
