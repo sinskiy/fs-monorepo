@@ -6,13 +6,13 @@ import {
   Request,
 } from 'express'
 import { z } from 'zod'
-import { NewPatientEntry, Patient, PatientWithoutSsn } from '../types'
+import { NewPatientEntry, NonSensitivePatient, Patient } from '../types'
 import patientsService from '../services/patientsService'
 import { newEntrySchema } from '../utils'
 
 const patientsRouter = Router()
 
-patientsRouter.get('/', (_req, res: Response<PatientWithoutSsn[]>) => {
+patientsRouter.get('/', (_req, res: Response<NonSensitivePatient[]>) => {
   res.json(patientsService.getEntries())
 })
 
@@ -34,9 +34,18 @@ patientsRouter.post(
   }
 )
 
+patientsRouter.get('/:id', (req, res) => {
+  const patient = patientsService.findById(req.params.id)
+  if (patient) {
+    res.json(patient)
+  } else {
+    res.status(404).json({ error: 'patient not found' })
+  }
+})
+
 const errorMiddleware: ErrorRequestHandler = (error, _req, res, next) => {
   if (error instanceof z.ZodError) {
-    res.status(400).send({ error: error.issues })
+    res.status(400).json({ error: error.issues })
   } else {
     next(error)
   }

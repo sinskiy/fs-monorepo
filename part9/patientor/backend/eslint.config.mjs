@@ -17,7 +17,10 @@ export default tseslint.config({
     '@typescript-eslint/no-unsafe-assignment': 'error',
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript/no-require-imports': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    ],
   },
   ignores: ['build/*'],
 })
