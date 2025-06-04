@@ -18,7 +18,7 @@ interface EntryBase {
   diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
-interface HospitalEntry extends EntryBase {
+export interface HospitalEntry extends EntryBase {
   type: "Hospital";
   discharge: {
     date: string;
@@ -26,7 +26,7 @@ interface HospitalEntry extends EntryBase {
   };
 }
 
-interface OccupationalHealthcareEntry extends EntryBase {
+export interface OccupationalHealthcareEntry extends EntryBase {
   type: "OccupationalHealthcare";
   employerName: "HyPD" | "FBI";
   sickLeave?: {
@@ -42,7 +42,7 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3,
 }
 
-interface HealthCheckEntry extends EntryBase {
+export interface HealthCheckEntry extends EntryBase {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }
@@ -63,3 +63,9 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
