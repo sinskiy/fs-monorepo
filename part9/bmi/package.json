@@ -1,0 +1,24 @@
+{
+  "name": "bmi",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types --watch app.ts",
+    "calculateBmi": "node --experimental-strip-types bmiCalculator.ts",
+    "calculateExercises": "node --experimental-strip-types exerciseCalculator.ts",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.29",
+    "eslint": "^9.28.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
