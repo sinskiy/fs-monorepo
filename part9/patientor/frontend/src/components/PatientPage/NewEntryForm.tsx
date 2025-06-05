@@ -102,7 +102,11 @@ export const NewEntryForm = ({
           <Typography variant="h5" component="h3">
             New {entryType} entry
           </Typography>
-          {error && <Alert severity="error">{error}</Alert>}
+          {error && (
+            <Alert severity="error" style={{ whiteSpace: "pre-line" }}>
+              {error}
+            </Alert>
+          )}
           <div>
             <TextField
               id="description"

@@ -12,25 +12,25 @@ export const newPatientSchema = z.object({
 })
 
 export const newEntryBaseSchema = z.object({
-  description: z.string(),
-  date: z.string(),
-  specialist: z.string(),
+  description: z.string().nonempty(),
+  date: z.string().date(),
+  specialist: z.string().nonempty(),
   diagnosisCodes: z.array(z.string()).optional(),
 })
 
 export const newHospitalEntrySchema = newEntryBaseSchema.extend({
   type: z.literal('Hospital'),
   discharge: z.object({
-    date: z.string(),
-    criteria: z.string(),
+    date: z.string().date(),
+    criteria: z.string().nonempty(),
   }),
 })
 
 export const newOccupationHealthcareEntrySchema = newEntryBaseSchema.extend({
   type: z.literal('OccupationalHealthcare'),
-  employerName: z.string(),
+  employerName: z.string().nonempty(),
   sickLeave: z
-    .object({ startDate: z.string(), endDate: z.string() })
+    .object({ startDate: z.string().date(), endDate: z.string().date() })
     .optional(),
 })
 
