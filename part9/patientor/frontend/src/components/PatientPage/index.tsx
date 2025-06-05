@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import patientsService from "../../services/patients";
-import { Patient } from "../../types";
+import { EntryFormValues, Patient } from "../../types";
 import { Female, Male } from "@mui/icons-material";
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import { EntryDetails } from "./EntryDetails";
 import { NewEntryForm } from "./NewEntryForm";
+import { getErrorAndLog } from "../../utils";
 
 export const PatientPage = () => {
   const params = useParams();
@@ -15,6 +16,7 @@ export const PatientPage = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
 
   const [showNewEntryForm, setShowNewEntryForm] = useState(false);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     if (params.id) {
@@ -37,6 +39,18 @@ export const PatientPage = () => {
     return <p>loading patient</p>;
   }
 
+  const handleNewEntrySubmit = (values: EntryFormValues) => {
+    patientsService
+      .createEntry(params.id!, values)
+      .then((value) => {
+        setPatient(value);
+        setShowNewEntryForm(false);
+      })
+      .catch((error) => {
+        setFormError(getErrorAndLog(error));
+      });
+  };
+
   return (
     <Box component="main" sx={{ mt: 3 }}>
       <Typography variant="h4" component="h2" fontWeight={600}>
@@ -53,9 +67,9 @@ export const PatientPage = () => {
         </Typography>
         {showNewEntryForm && (
           <NewEntryForm
-            hideEntryForm={() => setShowNewEntryForm(false)}
-            id={params.id}
-            setPatient={setPatient}
+            onCancel={() => setShowNewEntryForm(false)}
+            onSubmit={handleNewEntrySubmit}
+            error={formError}
           />
         )}
         {patient.entries.map((entry) => (

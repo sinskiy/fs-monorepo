@@ -11,27 +11,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
-import patientsService from "../../services/patients";
+import { FormEventHandler, useState } from "react";
 import {
   assertNever,
   Entry,
   EntryFormValues,
   HealthCheckRating,
-  Patient,
 } from "../../types";
-import { getErrorAndLog } from "../../utils";
 
 interface NewEntryFormProps {
-  id: string;
-  hideEntryForm: () => void;
-  setPatient: Dispatch<SetStateAction<Patient | null>>;
+  onCancel: () => void;
+  onSubmit: (entry: EntryFormValues) => void;
+  error: string;
 }
 
 export const NewEntryForm = ({
-  id,
-  hideEntryForm,
-  setPatient,
+  onCancel,
+  onSubmit,
+  error,
 }: NewEntryFormProps) => {
   const [entryType, setEntryType] = useState<Entry["type"]>("Hospital");
 
@@ -50,8 +47,6 @@ export const NewEntryForm = ({
   const [employerName, setEmployerName] = useState("");
   const [startDateOfSickLeave, setStartDateOfSickLeave] = useState("");
   const [endDateOfSickLeave, setEndDateOfSickLeave] = useState("");
-
-  const [error, setError] = useState("");
 
   const buildNewEntryValues = (): EntryFormValues => {
     const baseValues = { date, description, specialist, diagnosisCodes };
@@ -79,17 +74,9 @@ export const NewEntryForm = ({
     }
   };
 
-  const handleNewEntrySubmit: FormEventHandler = (e) => {
+  const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
-    patientsService
-      .createEntry(id, buildNewEntryValues())
-      .then((value) => {
-        setPatient(value);
-        hideEntryForm();
-      })
-      .catch((error) => {
-        setError(getErrorAndLog(error));
-      });
+    onSubmit(buildNewEntryValues());
   };
 
   return (
@@ -111,9 +98,9 @@ export const NewEntryForm = ({
             <MenuItem value="HealthCheck">Health check</MenuItem>
           </Select>
         </div>
-        <form onSubmit={handleNewEntrySubmit}>
+        <form onSubmit={handleSubmit}>
           <Typography variant="h5" component="h3">
-            New HealthCheck entry
+            New {entryType} entry
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}
           <div>
@@ -234,7 +221,7 @@ export const NewEntryForm = ({
             <Button
               variant="contained"
               color="error"
-              onClick={hideEntryForm}
+              onClick={onCancel}
               type="button"
             >
               cancel
