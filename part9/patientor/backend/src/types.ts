@@ -1,6 +1,11 @@
 import { z } from 'zod'
-import { newPatientSchema } from './utils'
-
+import {
+  newEntrySchema,
+  newHealthCheckEntrySchema,
+  newHospitalEntrySchema,
+  newOccupationHealthcareEntrySchema,
+  newPatientSchema,
+} from './utils'
 export interface Diagnosis {
   code: string
   name: string
@@ -15,27 +20,7 @@ export enum Gender {
 
 interface EntryBase {
   id: string
-  description: string
-  date: string
-  specialist: string
   diagnosisCodes?: Array<Diagnosis['code']>
-}
-
-interface HospitalEntry extends EntryBase {
-  type: 'Hospital'
-  discharge: {
-    date: string
-    criteria: string
-  }
-}
-
-interface OccupationalHealthcareEntry extends EntryBase {
-  type: 'OccupationalHealthcare'
-  employerName: string
-  sickLeave?: {
-    startDate: string
-    endDate: string
-  }
 }
 
 export enum HealthCheckRating {
@@ -45,21 +30,21 @@ export enum HealthCheckRating {
   'CriticalRisk' = 3,
 }
 
-interface HealthCheckEntry extends EntryBase {
-  type: 'HealthCheck'
-  healthCheckRating: HealthCheckRating
-}
+type NewHospitalEntry = z.infer<typeof newHospitalEntrySchema>
+type NewHealthCheckEntry = z.infer<typeof newHealthCheckEntrySchema>
+type NewOccupationHealthcareEntry = z.infer<
+  typeof newOccupationHealthcareEntrySchema
+>
+type HospitalEntry = NewHospitalEntry & EntryBase
+type HealthCheckEntry = NewHealthCheckEntry & EntryBase
+type OccupationalHealthcareEntry = NewOccupationHealthcareEntry & EntryBase
 
 export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry
 
-type UnionOmit<T, K extends string | number | symbol> = T extends unknown
-  ? Omit<T, K>
-  : never
-
-export type NewEntry = UnionOmit<Entry, 'id'>
+export type NewEntry = z.infer<typeof newEntrySchema>
 
 export type NewPatient = z.infer<typeof newPatientSchema>
 

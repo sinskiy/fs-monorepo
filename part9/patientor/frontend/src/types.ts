@@ -64,7 +64,11 @@ export interface Patient {
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
-export type EntryFormValues = Omit<HealthCheckEntry, "id">;
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type EntryFormValues = UnionOmit<Entry, "id">;
 
 export const assertNever = (value: never): never => {
   throw new Error(

@@ -11,14 +11,14 @@ export const newPatientSchema = z.object({
   occupation: z.string().nonempty(),
 })
 
-const newEntryBaseSchema = z.object({
+export const newEntryBaseSchema = z.object({
   description: z.string(),
   date: z.string(),
   specialist: z.string(),
   diagnosisCodes: z.array(z.string()).optional(),
 })
 
-const newHospitalEntrySchema = newEntryBaseSchema.extend({
+export const newHospitalEntrySchema = newEntryBaseSchema.extend({
   type: z.literal('Hospital'),
   discharge: z.object({
     date: z.string(),
@@ -26,19 +26,19 @@ const newHospitalEntrySchema = newEntryBaseSchema.extend({
   }),
 })
 
-const newOccupationHealthCareEntrySchema = newEntryBaseSchema.extend({
-  type: z.literal('OccupationalHealthCare'),
-  employerName: z.enum(['HyPD', 'FBI']),
+export const newOccupationHealthcareEntrySchema = newEntryBaseSchema.extend({
+  type: z.literal('OccupationalHealthcare'),
+  employerName: z.string(),
   sickLeave: z
     .object({ startDate: z.string(), endDate: z.string() })
     .optional(),
 })
 
-const newHealthCheckEntrySchema = newEntryBaseSchema.extend({
+export const newHealthCheckEntrySchema = newEntryBaseSchema.extend({
   type: z.literal('HealthCheck'),
   healthCheckRating: z.nativeEnum(HealthCheckRating),
 })
 
-export const newEntrySchema = newHospitalEntrySchema
-  .or(newOccupationHealthCareEntrySchema)
-  .or(newHealthCheckEntrySchema)
+export const newEntrySchema = newHospitalEntrySchema.or(
+  newOccupationHealthcareEntrySchema.or(newHealthCheckEntrySchema)
+)

@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  Input,
   InputLabel,
   MenuItem,
   Select,
@@ -12,7 +13,13 @@ import {
 } from "@mui/material";
 import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import patientsService from "../../services/patients";
-import { HealthCheckRating, Patient } from "../../types";
+import {
+  assertNever,
+  Entry,
+  EntryFormValues,
+  HealthCheckRating,
+  Patient,
+} from "../../types";
 import { getErrorAndLog } from "../../utils";
 
 interface NewEntryFormProps {
@@ -26,26 +33,56 @@ export const NewEntryForm = ({
   hideEntryForm,
   setPatient,
 }: NewEntryFormProps) => {
+  const [entryType, setEntryType] = useState<Entry["type"]>("Hospital");
+
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+
   const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(
     HealthCheckRating.Healthy
   );
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+
+  const [dischargeDate, setDischargeDate] = useState("");
+  const [dischargeCriteria, setDischargeCriteria] = useState("");
+
+  const [employerName, setEmployerName] = useState("");
+  const [startDateOfSickLeave, setStartDateOfSickLeave] = useState("");
+  const [endDateOfSickLeave, setEndDateOfSickLeave] = useState("");
+
   const [error, setError] = useState("");
+
+  const buildNewEntryValues = (): EntryFormValues => {
+    const baseValues = { date, description, specialist, diagnosisCodes };
+    switch (entryType) {
+      case "Hospital":
+        return {
+          ...baseValues,
+          type: "Hospital",
+          discharge: { date: dischargeDate, criteria: dischargeCriteria },
+        };
+      case "OccupationalHealthcare":
+        return {
+          ...baseValues,
+          type: "OccupationalHealthcare",
+          employerName,
+          sickLeave: {
+            startDate: startDateOfSickLeave,
+            endDate: endDateOfSickLeave,
+          },
+        };
+      case "HealthCheck":
+        return { ...baseValues, type: "HealthCheck", healthCheckRating };
+      default:
+        return assertNever(entryType);
+    }
+  };
 
   const handleNewEntrySubmit: FormEventHandler = (e) => {
     e.preventDefault();
     patientsService
-      .createEntry(id, {
-        date,
-        description,
-        healthCheckRating,
-        specialist,
-        type: "HealthCheck",
-        diagnosisCodes,
-      })
+      .createEntry(id, buildNewEntryValues())
       .then((value) => {
         setPatient(value);
         hideEntryForm();
@@ -58,6 +95,22 @@ export const NewEntryForm = ({
   return (
     <Card>
       <CardContent>
+        <div>
+          <InputLabel id="entry-type-label">Entry type</InputLabel>
+          <Select
+            labelId="entry-type-label"
+            id="entry-type"
+            value={entryType}
+            label="Entry type"
+            onChange={(e) => setEntryType(e.target.value as Entry["type"])}
+          >
+            <MenuItem value="Hospital">Hospital</MenuItem>
+            <MenuItem value="OccupationalHealthcare">
+              Occupational healthcare
+            </MenuItem>
+            <MenuItem value="HealthCheck">Health check</MenuItem>
+          </Select>
+        </div>
         <form onSubmit={handleNewEntrySubmit}>
           <Typography variant="h5" component="h3">
             New HealthCheck entry
@@ -73,11 +126,10 @@ export const NewEntryForm = ({
             />
           </div>
           <div>
-            <TextField
+            <InputLabel htmlFor="date">Date</InputLabel>
+            <Input
               id="date"
-              label="Date"
               type="date"
-              variant="standard"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
@@ -91,25 +143,84 @@ export const NewEntryForm = ({
               onChange={(e) => setSpecialist(e.target.value)}
             />
           </div>
-          <div>
-            <InputLabel id="health-check-rating-label">
-              Healthcheck rating
-            </InputLabel>
-            <Select
-              labelId="health-check-rating-label"
-              id="health-check-rating"
-              value={healthCheckRating}
-              label="Healthcheck rating"
-              onChange={(e) =>
-                setHealthCheckRating(e.target.value as HealthCheckRating)
-              }
-            >
-              <MenuItem value={HealthCheckRating.Healthy}>0</MenuItem>
-              <MenuItem value={HealthCheckRating.LowRisk}>1</MenuItem>
-              <MenuItem value={HealthCheckRating.HighRisk}>2</MenuItem>
-              <MenuItem value={HealthCheckRating.CriticalRisk}>3</MenuItem>
-            </Select>
-          </div>
+          {entryType === "HealthCheck" && (
+            <div>
+              <InputLabel id="health-check-rating-label">
+                Healthcheck rating
+              </InputLabel>
+              <Select
+                labelId="health-check-rating-label"
+                id="health-check-rating"
+                value={healthCheckRating}
+                label="Healthcheck rating"
+                onChange={(e) =>
+                  setHealthCheckRating(e.target.value as HealthCheckRating)
+                }
+              >
+                <MenuItem value={HealthCheckRating.Healthy}>0</MenuItem>
+                <MenuItem value={HealthCheckRating.LowRisk}>1</MenuItem>
+                <MenuItem value={HealthCheckRating.HighRisk}>2</MenuItem>
+                <MenuItem value={HealthCheckRating.CriticalRisk}>3</MenuItem>
+              </Select>
+            </div>
+          )}
+          {entryType === "Hospital" && (
+            <>
+              <div>
+                <InputLabel htmlFor="discharge-date">Discharge date</InputLabel>
+                <Input
+                  id="discharge-date"
+                  type="date"
+                  value={dischargeDate}
+                  onChange={(e) => setDischargeDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <TextField
+                  id="discharge-criteria"
+                  label="Discharge criteria"
+                  variant="standard"
+                  value={dischargeCriteria}
+                  onChange={(e) => setDischargeCriteria(e.target.value)}
+                />
+              </div>
+            </>
+          )}
+          {entryType === "OccupationalHealthcare" && (
+            <>
+              <div>
+                <TextField
+                  id="employer-name"
+                  label="Employer name"
+                  variant="standard"
+                  value={employerName}
+                  onChange={(e) => setEmployerName(e.target.value)}
+                />
+                <div>
+                  <InputLabel htmlFor="sick-leave-start-date">
+                    Sick leave start date
+                  </InputLabel>
+                  <Input
+                    id="sick-leave-start-date"
+                    type="date"
+                    value={startDateOfSickLeave}
+                    onChange={(e) => setStartDateOfSickLeave(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <InputLabel htmlFor="sick-leave-end-date">
+                    Sick leave end date
+                  </InputLabel>
+                  <Input
+                    id="sick-leave-end-date"
+                    type="date"
+                    value={endDateOfSickLeave}
+                    onChange={(e) => setEndDateOfSickLeave(e.target.value)}
+                  />
+                </div>
+              </div>
+            </>
+          )}
           <div>
             <TextField
               id="diagnosis-codes"
