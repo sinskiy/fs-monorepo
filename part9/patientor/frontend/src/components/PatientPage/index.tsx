@@ -7,6 +7,7 @@ import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import { EntryDetails } from "./EntryDetails";
 import { NewEntryForm } from "./NewEntryForm";
 import { getErrorAndLog } from "../../utils";
+import diagnosesService from "../../services/diagnoses";
 
 export const PatientPage = () => {
   const params = useParams();
@@ -14,6 +15,8 @@ export const PatientPage = () => {
   const [error, setError] = useState("");
 
   const [patient, setPatient] = useState<Patient | null>(null);
+
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
 
   const [showNewEntryForm, setShowNewEntryForm] = useState(false);
   const [formError, setFormError] = useState("");
@@ -23,11 +26,18 @@ export const PatientPage = () => {
       patientsService
         .getById(params.id)
         .then((value) => setPatient(value))
-        .catch((error) =>
-          setError(error?.response?.data?.error ?? error?.message ?? error)
-        );
+        .catch((error) => setError(getErrorAndLog(error)));
     }
   }, [params.id]);
+
+  useEffect(() => {
+    diagnosesService
+      .getAll()
+      .then((value) =>
+        setDiagnosisCodes(value.map((diagnosis) => diagnosis.code))
+      )
+      .catch((error) => setError(getErrorAndLog(error)));
+  }, []);
 
   if (!params.id) {
     return <p>invalid URL</p>;
@@ -70,6 +80,7 @@ export const PatientPage = () => {
             onCancel={() => setShowNewEntryForm(false)}
             onSubmit={handleNewEntrySubmit}
             error={formError}
+            diagnosisCodes={diagnosisCodes}
           />
         )}
         {patient.entries.map((entry) => (

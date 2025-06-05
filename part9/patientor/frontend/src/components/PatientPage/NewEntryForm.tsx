@@ -23,19 +23,23 @@ interface NewEntryFormProps {
   onCancel: () => void;
   onSubmit: (entry: EntryFormValues) => void;
   error: string;
+  diagnosisCodes: string[];
 }
 
 export const NewEntryForm = ({
   onCancel,
   onSubmit,
   error,
+  diagnosisCodes,
 }: NewEntryFormProps) => {
   const [entryType, setEntryType] = useState<Entry["type"]>("Hospital");
 
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+  const [selectedDiagnosisCodes, setSelectedDiagnosisCodes] = useState<
+    string[]
+  >([]);
 
   const [healthCheckRating, setHealthCheckRating] = useState<HealthCheckRating>(
     HealthCheckRating.Healthy
@@ -213,13 +217,27 @@ export const NewEntryForm = ({
             </>
           )}
           <div>
-            <TextField
+            <InputLabel id="diagnosis-codes-label">Diagnosis codes</InputLabel>
+            <Select
+              labelId="diagnosis-codes-label"
               id="diagnosis-codes"
+              multiple
+              value={selectedDiagnosisCodes}
               label="Diagnosis codes"
-              variant="standard"
-              value={diagnosisCodes.join(", ")}
-              onChange={(e) => setDiagnosisCodes(e.target.value.split(", "))}
-            />
+              onChange={(e) =>
+                setSelectedDiagnosisCodes(
+                  typeof e.target.value === "string"
+                    ? e.target.value.split(", ")
+                    : e.target.value
+                )
+              }
+            >
+              {diagnosisCodes.map((code) => (
+                <MenuItem key={code} value={code}>
+                  {code}
+                </MenuItem>
+              ))}
+            </Select>
           </div>
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
             <Button
